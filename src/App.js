@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import './App.css';
+import { Container, Grid, List, ListItem, ListItemText, Button } from '@mui/material';
 import ExpenseForm from './ExpenseForm';
 
 function App() {
-  // Load expenses from localStorage or default to an empty array
   const [expenses, setExpenses] = useState(() => {
     const savedExpenses = localStorage.getItem('expenses');
     return savedExpenses ? JSON.parse(savedExpenses) : [];
   });
 
-  // Save expenses to localStorage whenever they change
   useEffect(() => {
     localStorage.setItem('expenses', JSON.stringify(expenses));
   }, [expenses]);
@@ -23,26 +21,35 @@ function App() {
   };
 
   const totalExpense = expenses.reduce((total, expense) => {
-    // Convert to number and handle USD or KZT (can add conversion later if needed)
-    return total + parseFloat(expense.amount);
+  return total + parseFloat(expense.amount);
   }, 0);
 
   return (
-    <div>
-      <h1>Expense Tracker</h1>
-      <ExpenseForm onAddExpense={addExpense} />
-      <ul>
-        {expenses.map((expense, index) => (
-          <li key={index}>
-            <span>
-              {expense.title} - {expense.amount} {expense.currency} - {expense.category} - {expense.date}
-            </span>
-            <button onClick={() => deleteExpense(index)}>Delete</button>
-          </li>
-        ))}
-      </ul>
-      <h2>Total Expense: {totalExpense} USD</h2>
-    </div>
+    <Container>
+      <Grid container spacing={3}>
+        <Grid item xs={12}>
+          <h1>Expense Tracker</h1>
+          <ExpenseForm onAddExpense={addExpense} />
+        </Grid>
+        <Grid item xs={12}>
+          <h2 className="text-center mt-4">Total Expense: {totalExpense} {expenses.length > 0 ? expenses[0].currency : 'USD'}</h2>
+        </Grid>
+        <Grid item xs={12}>
+          <List>
+            {expenses.map((expense, index) => (
+              <ListItem key={index}>
+                <ListItemText
+                  primary={`${expense.title} - ${expense.amount} ${expense.currency} - ${expense.category} - ${expense.date}`}
+                />
+                <Button variant="outlined" color="secondary" onClick={() => deleteExpense(index)} style={{ marginLeft: '10px' }}>
+                  Delete
+                </Button>
+              </ListItem>
+            ))}
+          </List>
+        </Grid>
+      </Grid>
+    </Container>
   );
 }
 
