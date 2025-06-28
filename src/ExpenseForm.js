@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TextField, MenuItem, Select, InputLabel, FormControl, Button, Container, Grid } from '@mui/material';
+import { TextField, MenuItem, Select, InputLabel, FormControl, Button, Grid, Container } from '@mui/material';
 
 function ExpenseForm({ onAddExpense }) {
   const [title, setTitle] = useState('');
@@ -24,8 +24,8 @@ function ExpenseForm({ onAddExpense }) {
 
   return (
     <Container>
-      <Grid container spacing={2}>
-        <Grid item xs={12} sm={6}>
+      <Grid container spacing={2} justifyContent="center">
+        <Grid item xs={12} sm={6} md={4}>
           <TextField
             label="Title"
             variant="outlined"
@@ -34,7 +34,7 @@ function ExpenseForm({ onAddExpense }) {
             onChange={(e) => setTitle(e.target.value)}
           />
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12} sm={6} md={4}>
           <TextField
             label="Amount"
             variant="outlined"
@@ -44,7 +44,7 @@ function ExpenseForm({ onAddExpense }) {
             onChange={(e) => setAmount(e.target.value)}
           />
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12} sm={6} md={4}>
           <FormControl fullWidth>
             <InputLabel>Category</InputLabel>
             <Select
@@ -59,7 +59,7 @@ function ExpenseForm({ onAddExpense }) {
             </Select>
           </FormControl>
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12} sm={6} md={4}>
           <TextField
             label="Date"
             variant="outlined"
@@ -72,7 +72,7 @@ function ExpenseForm({ onAddExpense }) {
             }}
           />
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12} sm={6} md={4}>
           <FormControl fullWidth>
             <InputLabel>Currency</InputLabel>
             <Select

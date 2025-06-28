@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Grid, List, ListItem, ListItemText, Button } from '@mui/material';
+import { Container, Grid, List, ListItem, ListItemText, Button, TextField, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import ExpenseForm from './ExpenseForm';
 
 function App() {
@@ -7,6 +7,9 @@ function App() {
     const savedExpenses = localStorage.getItem('expenses');
     return savedExpenses ? JSON.parse(savedExpenses) : [];
   });
+
+  const [searchTerm, setSearchTerm] = useState(''); // State for the search bar
+  const [categoryFilter, setCategoryFilter] = useState(''); // State for category filter
 
   useEffect(() => {
     localStorage.setItem('expenses', JSON.stringify(expenses));
@@ -20,9 +23,14 @@ function App() {
     setExpenses(expenses.filter((_, i) => i !== index));
   };
 
-  const totalExpense = expenses.reduce((total, expense) => {
-  return total + parseFloat(expense.amount);
-  }, 0);
+  // Filter expenses by title and category
+  const filteredExpenses = expenses.filter((expense) => {
+    const matchesSearchTerm = expense.title.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = categoryFilter ? expense.category === categoryFilter : true;
+    return matchesSearchTerm && matchesCategory;
+  });
+
+  const totalExpense = filteredExpenses.reduce((total, expense) => total + parseFloat(expense.amount), 0);
 
   return (
     <Container>
@@ -31,12 +39,44 @@ function App() {
           <h1>Expense Tracker</h1>
           <ExpenseForm onAddExpense={addExpense} />
         </Grid>
-        <Grid item xs={12}>
-          <h2 className="text-center mt-4">Total Expense: {totalExpense} {expenses.length > 0 ? expenses[0].currency : 'USD'}</h2>
+
+        {/* Search Bar */}
+        <Grid item xs={12} sm={6} md={4}>
+          <TextField
+            label="Search by Title"
+            variant="outlined"
+            fullWidth
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </Grid>
+
+        {/* Category Filter */}
+        <Grid item xs={12} sm={6} md={4}>
+          <FormControl fullWidth>
+            <InputLabel>Category</InputLabel>
+            <Select
+              value={categoryFilter}
+              onChange={(e) => setCategoryFilter(e.target.value)}
+              label="Category"
+            >
+              <MenuItem value="">All Categories</MenuItem>
+              <MenuItem value="Food">Food</MenuItem>
+              <MenuItem value="Transport">Transport</MenuItem>
+              <MenuItem value="Entertainment">Entertainment</MenuItem>
+              <MenuItem value="Other">Other</MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
+
+        <Grid item xs={12}>
+          <h2>Total Expense: {totalExpense} {filteredExpenses.length > 0 ? filteredExpenses[0].currency : 'USD'}</h2>
+        </Grid>
+
+        {/* Expense List */}
         <Grid item xs={12}>
           <List>
-            {expenses.map((expense, index) => (
+            {filteredExpenses.map((expense, index) => (
               <ListItem key={index}>
                 <ListItemText
                   primary={`${expense.title} - ${expense.amount} ${expense.currency} - ${expense.category} - ${expense.date}`}
